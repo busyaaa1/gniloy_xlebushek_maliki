@@ -82,3 +82,14 @@ function resetBoard() {
 }
 
 document.addEventListener('DOMContentLoaded', createBoard);
+
+// музыка
+document.addEventListener('click', function startMusicOnce() {
+    const music = document.getElementById('bg-music');
+    if (music) {
+        music.play().catch(e => {
+            console.log('Автовоспроизведение заблокировано:', e);
+        });
+    }
+    document.removeEventListener('click', startMusicOnce);
+});
