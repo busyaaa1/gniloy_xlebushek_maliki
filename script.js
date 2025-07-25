@@ -84,7 +84,7 @@ function resetBoard() {
 document.addEventListener('DOMContentLoaded', createBoard);
 
 // музыка
-document.addEventListener('click', function startMusicOnce() {
+function startMusicOnce() {
     const music = document.getElementById('bg-music');
     if (music) {
         music.play().catch(e => {
@@ -92,4 +92,6 @@ document.addEventListener('click', function startMusicOnce() {
         });
     }
     document.removeEventListener('click', startMusicOnce);
-});
+}
+
+document.addEventListener('click', startMusicOnce);
