@@ -13,22 +13,43 @@
     </div>
     <script src="script.js"></script>
 
-
     <div class="sticker top-left">🌸</div>
     <div class="sticker top-right">🌐</div>
     <div class="sticker bottom-left">⭐</div>
     <div class="sticker bottom-right">🌞</div>
-<!-- музыка -->
+
+    <!-- музыка -->
     <audio id="bg-music" src="music.mp3" loop autoplay></audio>
 
+    <!-- инструкция -->
+    <div class="popup-instruction">
+      <div class="popup-content">
+        <h2>What is a memory game? 🧠</h2>
+        <p>Memory game is a classic game in which the player must find pairs of identical cards by opening them one by one. The main task is to remember the location of each card in order to successfully find pairs. This is a great exercise for training memory and concentration. <br><b>Good luck!✨</b></p>
+        <button id="start-game" class="nice-button"><b>It's clear!</b></button>
+      </div>
+    </div>
 
-    <!-- добавлено -->
-     <div class="popup-instruction">
-  <div class="popup-content">
-    <h2>What is a memory game? 🧠</h2>
-    <p>Memory game is a classic game in which the player must find pairs of identical cards by opening them one by one. The main task is to remember the location of each card in order to successfully find pairs. This is a great exercise for training memory and concentration. <br><b>Good luck!✨</b></p>
-    <button id="start-game" class="nice-button"><b>It's clear!</b></button>
-  </div>
-</div>
+    <!-- Таймер -->
+    <div id="timer" class="hidden">Time: 2:00</div>
+
+    <!-- Проигрыш -->
+    <div id="game-over" class="end-screen hidden">
+      <img src="game_over.webp" alt="Game Over">
+      <button onclick="location.reload()" class="refresh-button"><b>Refresh</b></button>
+    </div>
+
+    <!-- Победа -->
+    <div id="winner" class="end-screen hidden">
+      <img src="winner.webp" alt="Winner">
+      <button onclick="location.reload()" class="refresh-button">Refresh</button>
+    </div>
+
+    <!-- Звук клика -->
+    <audio id="click-sound" src="click.mp3"></audio>
+
+
+    <audio id="win-sound" src="win.mp3"></audio>
+<audio id="lose-sound" src="lose.mp3"></audio>
 </body>
 </html>
