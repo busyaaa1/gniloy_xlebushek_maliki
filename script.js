@@ -95,3 +95,13 @@ function startMusicOnce() {
 }
 
 document.addEventListener('click', startMusicOnce);
+
+
+// добавлено
+document.addEventListener('DOMContentLoaded', () => {
+    const popup = document.querySelector('.popup-instruction');
+    const button = document.getElementById('start-game');
+    button.addEventListener('click', () => {
+        popup.style.display = 'none';
+    });
+});
