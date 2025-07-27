@@ -21,6 +21,13 @@ let firstCard = null;
 let secondCard = null;
 let lockBoard = false;
 
+// === ДОБАВЛЕНО: Переменные для таймера и победы ===
+let timerStarted = false;
+let timeLeft = 120;
+let timerInterval;
+let matchedPairs = 0;
+const totalPairs = cardsArray.length;
+
 function createBoard() {
     const gameBoard = document.querySelector('.game-board');
     const shuffledCards = [...cardsArray, ...cardsArray].sort(() => 0.5 - Math.random());
@@ -42,6 +49,16 @@ function createBoard() {
 function flipCard() {
     if (lockBoard) return;
     if (this === firstCard) return;
+
+    // === ДОБАВЛЕНО: Запуск таймера при первом клике ===
+    if (!timerStarted) {
+        timerStarted = true;
+        startTimer();
+    }
+
+    // === ДОБАВЛЕНО: Воспроизведение звука клика ===
+    const clickSound = document.getElementById('click-sound');
+    if (clickSound) clickSound.play();
 
     this.classList.add('flipped');
 
@@ -65,6 +82,13 @@ function checkForMatch() {
 function disableCards() {
     firstCard.removeEventListener('click', flipCard);
     secondCard.removeEventListener('click', flipCard);
+
+    matchedPairs++; // === ДОБАВЛЕНО: Увеличение счётчика совпадений ===
+    if (matchedPairs === totalPairs) {
+        clearInterval(timerInterval);
+        showWinner();
+    }
+
     resetBoard();
 }
 
@@ -81,6 +105,46 @@ function resetBoard() {
     [firstCard, secondCard, lockBoard] = [null, null, false];
 }
 
+// === ДОБАВЛЕНО: Функция запуска таймера ===
+function startTimer() {
+    const timerEl = document.getElementById('timer');
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerEl.textContent = `Time: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            showGameOver();
+        }
+    }, 1000);
+}
+
+// === ДОБАВЛЕНО: Функции показа окон результата ===
+function showGameOver() {
+    const gameOverEl = document.getElementById('game-over');
+    gameOverEl.classList.remove('hidden');
+    gameOverEl.innerHTML = `
+        <img src="game_over.webp" alt="Game Over" class="shaking">
+        <button class="refresh-button" onclick="location.reload()">Refresh</button>
+    `;
+    const loseSound = document.getElementById('lose-sound');
+    if (loseSound) loseSound.play();
+}
+
+function showWinner() {
+    const winnerEl = document.getElementById('winner');
+    winnerEl.classList.remove('hidden');
+    winnerEl.innerHTML = `
+        <img src="winner.webp" alt="Winner" class="shaking">
+        <button class="refresh-button" onclick="location.reload()">Refresh</button>
+    `;
+    const winSound = document.getElementById('win-sound');
+    if (winSound) winSound.play();
+}
+
+// === ИНИЦИАЛИЗАЦИЯ ===
 document.addEventListener('DOMContentLoaded', createBoard);
 
 // музыка
@@ -96,12 +160,14 @@ function startMusicOnce() {
 
 document.addEventListener('click', startMusicOnce);
 
-
-// добавлено
+// добавлено: скрытие инструкции при нажатии на кнопку
 document.addEventListener('DOMContentLoaded', () => {
     const popup = document.querySelector('.popup-instruction');
     const button = document.getElementById('start-game');
+    const timerEl = document.getElementById('timer');
+
     button.addEventListener('click', () => {
         popup.style.display = 'none';
+        timerEl.classList.remove('hidden'); // Показать таймер
     });
 });
