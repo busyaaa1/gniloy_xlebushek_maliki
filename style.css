@@ -5,12 +5,15 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
   background-color: #f7f7f7; /* твой цвет */
   font-family: 'Segoe UI', sans-serif;
   background: linear-gradient(135deg, #ecfffc, #ffa8c8);
 
   justify-content: start;
+  **background-attachment: fixed;** /* Делает фон фиксированным относительно окна просмотра */
+    **background-size: cover;** /* Растягивает фон, чтобы он покрывал всю область, обрезая лишнее */
+    **background-repeat: no-repeat;** /* Отменяет повторение фона */
+    min-height: 100vh; /* Убеждаемся, что body занимает всю высоту */
 }
 
 /* .game-board {
