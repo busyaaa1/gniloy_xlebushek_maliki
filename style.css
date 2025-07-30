@@ -307,9 +307,974 @@ body {
 
     /* Ваши настройки для остальных элементов в этом медиа-запросе */
     .popup-content h2 { font-size: 18px; }
+    .popup-content p /*
+ * Окончательная версия CSS-стилей для игры "Память"
+ * Сделана для 6 колонок на всех устройствах и оптимизирована для мобильных.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');
+
+
+
+::selection {
+    background-color: #FFA8C8; /* Светло-розовый цвет для фона выделения */
+    color: #FFFFFF; /* Цвет текста, который будет поверх розового фона (например, белый) */
+}
+
+/* Для совместимости с Firefox (::moz-selection) */
+::-moz-selection {
+    background-color: #FFA8C8;
+    color: #FFFFFF;
+}
+
+
+
+/* *** НОВОЕ ПРАВИЛО: Применяем шрифт ко ВСЕМУ (универсальный селектор *) *** */
+* {
+    font-family: "Kumar One", serif !important; /* !important принудительно применяет этот шрифт */
+    font-weight: 400; /* Kumar One имеет только одно начертание 400 */
+    font-style: normal;
+}
+/* ************************************************************************** */
+
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Вертикальное центрирование содержимого страницы */
+    align-items: center; /* Горизонтальное центрирование содержимого страницы */
+    min-height: 100vh; /* Гарантирует, что body занимает всю высоту окна просмотра для фона */
+    background-color: #f7f7f7; /* Твой цвет по умолчанию */
+    
+    /* font-family, font-weight, font-style теперь перенесены в универсальный селектор * */
+    /* Здесь они больше не нужны, но можно оставить как запасной вариант, если * не сработает везде */
+    /* font-family: "Kumar One", serif; */
+    /* font-weight: 400; */
+    /* font-style: normal; */
+
+    background: linear-gradient(135deg, #fff1f1, #ffa4c6); /* Красивый градиентный фон */
+    background-attachment: fixed; /* Делает фон фиксированным относительно окна просмотра */
+    background-size: cover;      /* Растягивает фон, чтобы он покрывал всю область, обрезая лишнее */
+    background-repeat: no-repeat; /* Предотвращает повторение фона */
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* 6 карточек всегда, равномерно распределенных */
+    gap: 10px; /* Отступы между карточками по умолчанию */
+    max-width: 720px; /* Максимальная ширина доски на больших экранах */
+    margin: auto; /* Центрирование доски */
+    padding: 20px; /* Внутренние отступы доски */
+    justify-content: center; /* Центрирование карточек внутри сетки */
+    align-items: center; /* Выравнивание карточек внутри сетки */
+    box-sizing: border-box; /* Учитывает padding и border в общей ширине/высоте */
+}
+
+.card {
+    width: 90px; /* Ширина карточки по умолчанию (для десктопов) */
+    height: 140px; /* Высота карточки по умолчанию (для десктопов) */
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden; /* Обрезает содержимое, выходящее за границы карточки */
+}
+
+.card img {
+    max-width: 100%;
+    max-height: 100%;
+    display: none; /* По умолчанию изображение скрыто */
+}
+
+.card.flipped img {
+    display: block; /* Показываем изображение, когда карточка перевернута */
+}
+
+/* --- Анимация "тряски" карточки при наведении --- */
+@keyframes shake {
+    0% { transform: translate(0px, 0px) rotate(0deg); }
+    20% { transform: translate(-2px, 0px) rotate(-1deg); }
+    40% { transform: translate(2px, 0px) rotate(1deg); }
+    60% { transform: translate(-2px, 0px) rotate(-1deg); }
+    80% { transform: translate(2px, 0px) rotate(1deg); }
+    100% { transform: translate(0px, 0px) rotate(0deg); }
+}
+
+.card:hover:not(.flipped) {
+    animation: shake 0.4s;
+    transform: translateZ(0); /* Для лучшей производительности анимации */
+}
+
+/* --- Стикеры-эмодзи в углах --- */
+.sticker {
+    position: fixed;
+    font-size: 40px;
+    z-index: 999; /* Поверх большинства элементов */
+    animation: spin 8s linear infinite; /* Вращение */
+    pointer-events: none; /* Чтобы стикеры не мешали кликать по элементам под ними */
+}
+
+.sticker.top-left { top: 10px; left: 10px; }
+.sticker.top-right { top: 10px; right: 10px; }
+.sticker.bottom-left { bottom: 10px; left: 10px; }
+.sticker.bottom-right { bottom: 10px; right: 10px; }
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* --- Поп-ап инструкция / начальный экран --- */
+.popup-instruction {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7); /* Затемненный фон */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+.popup-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 500px; /* Максимальная ширина попапа */
+    width: 90%; /* Адаптивная ширина для мобильных */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.popup-content strong {
+    font-weight: 800; /* Или 800, 900 для еще большей жирности, если шрифт поддерживает */
+    /* Некоторые шрифты, как Kumar One, могут иметь только одно начертание (400) */
+    /* В этом случае более высокие значения font-weight могут не давать эффекта */
+    /* Но это хорошая практика для других шрифтов */
+    font-size: 15px;
+}
+
+/* --- Стиль красивой кнопки --- */
+.nice-button {
+    background: linear-gradient(135deg, #ff8a00, #e52e71); /* Градиент */
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    font-size: 18px;
+    /* font-family и font-weight теперь задаются через * */
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s, box-shadow 0.2s; /* Плавные переходы */
+}
+
+.nice-button:hover {
+    transform: scale(1.05); /* Увеличение при наведении */
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.nice-button:active {
+    transform: scale(0.98); /* Небольшое сжатие при нажатии */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+/* --- Анимация появления поп-апа --- */
+@keyframes popupFade {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.popup-content {
+    animation: popupFade 0.3s ease;
+}
+
+/* --- Таймер --- */
+#timer {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 10px 20px;
+    border-radius: 12px;
+    /* font-family и font-weight теперь задаются через * */
+    font-size: 18px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+/* --- Финальный экран победы/поражения --- */
+.end-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000; /* Поверх всех других элементов */
+    text-align: center;
+    padding: 20px;
+}
+
+#game-over { background: linear-gradient(to right, #dfdff2, #ebf5f7); } 
+#winner { background: linear-gradient(to right, #f9ffd6, #afffaf); }
+
+.end-screen img {
+    width: 320px; /* Размер изображения на финальном экране */
+    animation: swing 1.5s infinite ease-in-out; /* Анимация качания */
+    pointer-events: none; /* Чтобы не мешала кнопке */
+}
+
+.end-screen button {
+    margin-top: 20px;
+    padding: 12px 24px;
+    font-size: 18px;
+    /* font-family и font-weight теперь задаются через * */
+    border-radius: 12px;
+    background-color: #ff8a00; /* Цвет кнопки */
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    z-index: 2001; /* Над изображением */
+}
+
+@keyframes swing {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); }
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(-5deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.hidden {
+    display: none !important; /* Утилитарный класс для скрытия элементов */
+}
+
+/* --- Кнопка "обновить" --- */
+.refresh-button {
+    background: linear-gradient(135deg, #ffaa0c, #e03a4d);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    font-size: 18px;
+    /* font-family и font-weight теперь задаются через * */
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.refresh-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.refresh-button:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+/* --- Медиа-запросы для адаптации --- */
+@media (max-width: 768px) {
+    .game-board {
+        gap: 8px; /* Немного уменьшим отступы */
+        padding: 10px; /* Уменьшим внутренние отступы */
+    }
+
+    .card {
+        width: 70px; /* Ваши настройки, как вы просили */
+        height: 100px; /* Ваши настройки, как вы просили */
+    }
+
+    /* Ваши настройки для остальных элементов в этом медиа-запросе */
+    .popup-content h2 { font-size: 20px; }
+    .popup-content p { font-size: 14px; }
+    .nice-button, .refresh-button { padding: 10px 20px; font-size: 16px; }
+    .sticker { font-size: 30px; }
+    .end-screen img { width: 200px; }
+}
+
+@media (max-width: 480px) {
+    .game-board {
+        gap: 5px; /* Ещё уменьшим отступы */
+        padding: 5px; /* Ещё уменьшим внутренние отступы */
+    }
+
+    .card {
+        width: 60px; /* Ваши настройки, как вы просили */
+        height: 80px; /* Ваши настройки, как вы просили */
+    }
+
+    /* Ваши настройки для остальных элементов в этом медиа-запросе */
+    .popup-content h2 { font-size: 18px; }
     .popup-content p { font-size: 12px; }
     .nice-button, .refresh-button { padding: 8px 16px; font-size: 14px; }
     .sticker { font-size: 25px; }
     .end-screen img { width: 150px; }
     #timer { font-size: 14px; padding: 5px 10px; }
+}
+{ font-size: 12px; }
+    .nice-button, .refresh-button { padding: 8px 16px; font-size: 14px; }
+    .sticker { f/*
+ * Окончательная версия CSS-стилей для игры "Память"
+ * Сделана для 6 колонок на всех устройствах и оптимизирована для мобильных.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');
+
+
+
+::selection {
+    background-color: #FFA8C8; /* Светло-розовый цвет для фона выделения */
+    color: #FFFFFF; /* Цвет текста, который будет поверх розового фона (например, белый) */
+}
+
+/* Для совместимости с Firefox (::moz-selection) */
+::-moz-selection {
+    background-color: #FFA8C8;
+    color: #FFFFFF;
+}
+
+
+
+/* *** НОВОЕ ПРАВИЛО: Применяем шрифт ко ВСЕМУ (универсальный селектор *) *** */
+* {
+    font-family: "Kumar One", serif !important; /* !important принудительно применяет этот шрифт */
+    font-weight: 400; /* Kumar One имеет только одно начертание 400 */
+    font-style: normal;
+}
+/* ************************************************************************** */
+
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Вертикальное центрирование содержимого страницы */
+    align-items: center; /* Горизонтальное центрирование содержимого страницы */
+    min-height: 100vh; /* Гарантирует, что body занимает всю высоту окна просмотра для фона */
+    background-color: #f7f7f7; /* Твой цвет по умолчанию */
+    
+    /* font-family, font-weight, font-style теперь перенесены в универсальный селектор * */
+    /* Здесь они больше не нужны, но можно оставить как запасной вариант, если * не сработает везде */
+    /* font-family: "Kumar One", serif; */
+    /* font-weight: 400; */
+    /* font-style: normal; */
+
+    background: linear-gradient(135deg, #fff1f1, #ffa4c6); /* Красивый градиентный фон */
+    background-attachment: fixed; /* Делает фон фиксированным относительно окна просмотра */
+    background-size: cover;      /* Растягивает фон, чтобы он покрывал всю область, обрезая лишнее */
+    background-repeat: no-repeat; /* Предотвращает повторение фона */
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* 6 карточек всегда, равномерно распределенных */
+    gap: 10px; /* Отступы между карточками по умолчанию */
+    max-width: 720px; /* Максимальная ширина доски на больших экранах */
+    margin: auto; /* Центрирование доски */
+    padding: 20px; /* Внутренние отступы доски */
+    justify-content: center; /* Центрирование карточек внутри сетки */
+    align-items: center; /* Выравнивание карточек внутри сетки */
+    box-sizing: border-box; /* Учитывает padding и border в общей ширине/высоте */
+}
+
+.card {
+    width: 90px; /* Ширина карточки по умолчанию (для десктопов) */
+    height: 140px; /* Высота карточки по умолчанию (для десктопов) */
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden; /* Обрезает содержимое, выходящее за границы карточки */
+}
+
+.card img {
+    max-width: 100%;
+    max-height: 100%;
+    display: none; /* По умолчанию изображение скрыто */
+}
+
+.card.flipped img {
+    display: block; /* Показываем изображение, когда карточка перевернута */
+}
+
+/* --- Анимация "тряски" карточки при наведении --- */
+@keyframes shake {
+    0% { transform: translate(0px, 0px) rotate(0deg); }
+    20% { transform: translate(-2px, 0px) rotate(-1deg); }
+    40% { transform: translate(2px, 0px) rotate(1deg); }
+    60% { transform: translate(-2px, 0px) rotate(-1deg); }
+    80% { transform: translate(2px, 0px) rotate(1deg); }
+    100% { transform: translate(0px, 0px) rotate(0deg); }
+}
+
+.card:hover:not(.flipped) {
+    animation: shake 0.4s;
+    transform: translateZ(0); /* Для лучшей производительности анимации */
+}
+
+/* --- Стикеры-эмодзи в углах --- */
+.sticker {
+    position: fixed;
+    font-size: 40px;
+    z-index: 999; /* Поверх большинства элементов */
+    animation: spin 8s linear infinite; /* Вращение */
+    pointer-events: none; /* Чтобы стикеры не мешали кликать по элементам под ними */
+}
+
+.sticker.top-left { top: 10px; left: 10px; }
+.sticker.top-right { top: 10px; right: 10px; }
+.sticker.bottom-left { bottom: 10px; left: 10px; }
+.sticker.bottom-right { bottom: 10px; right: 10px; }
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* --- Поп-ап инструкция / начальный экран --- */
+.popup-instruction {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7); /* Затемненный фон */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+.popup-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 500px; /* Максимальная ширина попапа */
+    width: 90%; /* Адаптивная ширина для мобильных */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.popup-content strong {
+    font-weight: 800; /* Или 800, 900 для еще большей жирности, если шрифт поддерживает */
+    /* Некоторые шрифты, как Kumar One, могут иметь только одно начертание (400) */
+    /* В этом случае более высокие значения font-weight могут не давать эффекта */
+    /* Но это хорошая практика для других шрифтов */
+    font-size: 15px;
+}
+
+/* --- Стиль красивой кнопки --- */
+.nice-button {
+    background: linear-gradient(135deg, #ff8a00, #e52e71); /* Градиент */
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    font-size: 18px;
+    /* font-family и font-weight теперь задаются через * */
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s, box-shadow 0.2s; /* Плавные переходы */
+}
+
+.nice-button:hover {
+    transform: scale(1.05); /* Увеличение при наведении */
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.nice-button:active {
+    transform: scale(0.98); /* Небольшое сжатие при нажатии */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+/* --- Анимация появления поп-апа --- */
+@keyframes popupFade {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.popup-content {
+    animation: popupFade 0.3s ease;
+}
+
+/* --- Таймер --- */
+#timer {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 10px 20px;
+    border-radius: 12px;
+    /* font-family и font-weight теперь задаются через * */
+    font-size: 18px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+/* --- Финальный экран победы/поражения --- */
+.end-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000; /* Поверх всех других элементов */
+    text-align: center;
+    padding: 20px;
+}
+
+#game-over { background: linear-gradient(to right, #dfdff2, #ebf5f7); } 
+#winner { background: linear-gradient(to right, #f9ffd6, #afffaf); }
+
+.end-screen img {
+    width: 320px; /* Размер изображения на финальном экране */
+    animation: swing 1.5s infinite ease-in-out; /* Анимация качания */
+    pointer-events: none; /* Чтобы не мешала кнопке */
+}
+
+.end-screen button {
+    margin-top: 20px;
+    padding: 12px 24px;
+    font-size: 18px;
+    /* font-family и font-weight теперь задаются через * */
+    border-radius: 12px;
+    background-color: #ff8a00; /* Цвет кнопки */
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    z-index: 2001; /* Над изображением */
+}
+
+@keyframes swing {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); }
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(-5deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.hidden {
+    display: none !important; /* Утилитарный класс для скрытия элементов */
+}
+
+/* --- Кнопка "обновить" --- */
+.refresh-button {
+    background: linear-gradient(135deg, #ffaa0c, #e03a4d);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    font-size: 18px;
+    /* font-family и font-weight теперь задаются через * */
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.refresh-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.refresh-button:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+/* --- Медиа-запросы для адаптации --- */
+@media (max-width: 768px) {
+    .game-board {
+        gap: 8px; /* Немного уменьшим отступы */
+        padding: 10px; /* Уменьшим внутренние отступы */
+    }
+
+    .card {
+        width: 70px; /* Ваши настройки, как вы просили */
+        height: 100px; /* Ваши настройки, как вы просили */
+    }
+
+    /* Ваши настройки для остальных элементов в этом медиа-запросе */
+    .popup-content h2 { font-size: 20px; }
+    .popup-content p { font-size: 14px; }
+    .nice-button, .refresh-button { padding: 10px 20px; font-size: 16px; }
+    .sticker { font-size: 30px; }
+    .end-screen img { width: 200px; }
+}
+
+@media (max-width: 480px) {
+    .game-board {
+        gap: 5px; /* Ещё уменьшим отступы */
+        padding: 5px; /* Ещё уменьшим внутренние отступы */
+    }
+
+    .card {
+        width: 60px; /* Ваши настройки, как вы просили */
+        height: 80px; /* Ваши настройки, как вы просили */
+    }
+
+    /* Ваши настройки для остальных элементов в этом медиа-запросе */
+    .popup-content h2 { font-size: 18px; }
+    .popup-content p /*
+ * Окончательная версия CSS-стилей для игры "Память"
+ * Сделана для 6 колонок на всех устройствах и оптимизирована для мобильных.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');
+
+
+
+::selection {
+    background-color: #FFA8C8; /* Светло-розовый цвет для фона выделения */
+    color: #FFFFFF; /* Цвет текста, который будет поверх розового фона (например, белый) */
+}
+
+/* Для совместимости с Firefox (::moz-selection) */
+::-moz-selection {
+    background-color: #FFA8C8;
+    color: #FFFFFF;
+}
+
+
+
+/* *** НОВОЕ ПРАВИЛО: Применяем шрифт ко ВСЕМУ (универсальный селектор *) *** */
+* {
+    font-family: "Kumar One", serif !important; /* !important принудительно применяет этот шрифт */
+    font-weight: 400; /* Kumar One имеет только одно начертание 400 */
+    font-style: normal;
+}
+/* ************************************************************************** */
+
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Вертикальное центрирование содержимого страницы */
+    align-items: center; /* Горизонтальное центрирование содержимого страницы */
+    min-height: 100vh; /* Гарантирует, что body занимает всю высоту окна просмотра для фона */
+    background-color: #f7f7f7; /* Твой цвет по умолчанию */
+    
+    /* font-family, font-weight, font-style теперь перенесены в универсальный селектор * */
+    /* Здесь они больше не нужны, но можно оставить как запасной вариант, если * не сработает везде */
+    /* font-family: "Kumar One", serif; */
+    /* font-weight: 400; */
+    /* font-style: normal; */
+
+    background: linear-gradient(135deg, #fff1f1, #ffa4c6); /* Красивый градиентный фон */
+    background-attachment: fixed; /* Делает фон фиксированным относительно окна просмотра */
+    background-size: cover;      /* Растягивает фон, чтобы он покрывал всю область, обрезая лишнее */
+    background-repeat: no-repeat; /* Предотвращает повторение фона */
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* 6 карточек всегда, равномерно распределенных */
+    gap: 10px; /* Отступы между карточками по умолчанию */
+    max-width: 720px; /* Максимальная ширина доски на больших экранах */
+    margin: auto; /* Центрирование доски */
+    padding: 20px; /* Внутренние отступы доски */
+    justify-content: center; /* Центрирование карточек внутри сетки */
+    align-items: center; /* Выравнивание карточек внутри сетки */
+    box-sizing: border-box; /* Учитывает padding и border в общей ширине/высоте */
+}
+
+.card {
+    width: 90px; /* Ширина карточки по умолчанию (для десктопов) */
+    height: 140px; /* Высота карточки по умолчанию (для десктопов) */
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden; /* Обрезает содержимое, выходящее за границы карточки */
+}
+
+.card img {
+    max-width: 100%;
+    max-height: 100%;
+    display: none; /* По умолчанию изображение скрыто */
+}
+
+.card.flipped img {
+    display: block; /* Показываем изображение, когда карточка перевернута */
+}
+
+/* --- Анимация "тряски" карточки при наведении --- */
+@keyframes shake {
+    0% { transform: translate(0px, 0px) rotate(0deg); }
+    20% { transform: translate(-2px, 0px) rotate(-1deg); }
+    40% { transform: translate(2px, 0px) rotate(1deg); }
+    60% { transform: translate(-2px, 0px) rotate(-1deg); }
+    80% { transform: translate(2px, 0px) rotate(1deg); }
+    100% { transform: translate(0px, 0px) rotate(0deg); }
+}
+
+.card:hover:not(.flipped) {
+    animation: shake 0.4s;
+    transform: translateZ(0); /* Для лучшей производительности анимации */
+}
+
+/* --- Стикеры-эмодзи в углах --- */
+.sticker {
+    position: fixed;
+    font-size: 40px;
+    z-index: 999; /* Поверх большинства элементов */
+    animation: spin 8s linear infinite; /* Вращение */
+    pointer-events: none; /* Чтобы стикеры не мешали кликать по элементам под ними */
+}
+
+.sticker.top-left { top: 10px; left: 10px; }
+.sticker.top-right { top: 10px; right: 10px; }
+.sticker.bottom-left { bottom: 10px; left: 10px; }
+.sticker.bottom-right { bottom: 10px; right: 10px; }
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* --- Поп-ап инструкция / начальный экран --- */
+.popup-instruction {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7); /* Затемненный фон */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+.popup-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 500px; /* Максимальная ширина попапа */
+    width: 90%; /* Адаптивная ширина для мобильных */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.popup-content strong {
+    font-weight: 800; /* Или 800, 900 для еще большей жирности, если шрифт поддерживает */
+    /* Некоторые шрифты, как Kumar One, могут иметь только одно начертание (400) */
+    /* В этом случае более высокие значения font-weight могут не давать эффекта */
+    /* Но это хорошая практика для других шрифтов */
+    font-size: 15px;
+}
+
+/* --- Стиль красивой кнопки --- */
+.nice-button {
+    background: linear-gradient(135deg, #ff8a00, #e52e71); /* Градиент */
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    font-size: 18px;
+    /* font-family и font-weight теперь задаются через * */
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s, box-shadow 0.2s; /* Плавные переходы */
+}
+
+.nice-button:hover {
+    transform: scale(1.05); /* Увеличение при наведении */
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.nice-button:active {
+    transform: scale(0.98); /* Небольшое сжатие при нажатии */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+/* --- Анимация появления поп-апа --- */
+@keyframes popupFade {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.popup-content {
+    animation: popupFade 0.3s ease;
+}
+
+/* --- Таймер --- */
+#timer {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 10px 20px;
+    border-radius: 12px;
+    /* font-family и font-weight теперь задаются через * */
+    font-size: 18px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+/* --- Финальный экран победы/поражения --- */
+.end-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000; /* Поверх всех других элементов */
+    text-align: center;
+    padding: 20px;
+}
+
+#game-over { background: linear-gradient(to right, #dfdff2, #ebf5f7); } 
+#winner { background: linear-gradient(to right, #f9ffd6, #afffaf); }
+
+.end-screen img {
+    width: 320px; /* Размер изображения на финальном экране */
+    animation: swing 1.5s infinite ease-in-out; /* Анимация качания */
+    pointer-events: none; /* Чтобы не мешала кнопке */
+}
+
+.end-screen button {
+    margin-top: 20px;
+    padding: 12px 24px;
+    font-size: 18px;
+    /* font-family и font-weight теперь задаются через * */
+    border-radius: 12px;
+    background-color: #ff8a00; /* Цвет кнопки */
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    z-index: 2001; /* Над изображением */
+}
+
+@keyframes swing {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); }
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(-5deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.hidden {
+    display: none !important; /* Утилитарный класс для скрытия элементов */
+}
+
+/* --- Кнопка "обновить" --- */
+.refresh-button {
+    background: linear-gradient(135deg, #ffaa0c, #e03a4d);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    font-size: 18px;
+    /* font-family и font-weight теперь задаются через * */
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.refresh-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.refresh-button:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+/* --- Медиа-запросы для адаптации --- */
+@media (max-width: 768px) {
+    .game-board {
+        gap: 8px; /* Немного уменьшим отступы */
+        padding: 10px; /* Уменьшим внутренние отступы */
+    }
+
+    .card {
+        width: 70px; /* Ваши настройки, как вы просили */
+        height: 100px; /* Ваши настройки, как вы просили */
+    }
+
+    /* Ваши настройки для остальных элементов в этом медиа-запросе */
+    .popup-content h2 { font-size: 20px; }
+    .popup-content p { font-size: 14px; }
+    .nice-button, .refresh-button { padding: 10px 20px; font-size: 16px; }
+    .sticker { font-size: 30px; }
+    .end-screen img { width: 200px; }
+}
+
+@media (max-width: 480px) {
+    .game-board {
+        gap: 5px; /* Ещё уменьшим отступы */
+        padding: 5px; /* Ещё уменьшим внутренние отступы */
+    }
+
+    .card {
+        width: 60px; /* Ваши настройки, как вы просили */
+        height: 80px; /* Ваши настройки, как вы просили */
+    }
+
+    /* Ваши настройки для остальных элементов в этом медиа-запросе */
+    .popup-content h2 { font-size: 18px; }
+    .popup-content p { font-size: 12px; }
+    .nice-button, .refresh-button { padding: 8px 16px; font-size: 14px; }
+    .sticker { font-size: 25px; }
+    .end-screen img { width: 150px; }
+    #timer { font-size: 14px; padding: 5px 10px; }
+}
+{ font-size: 12px; }
+    .nice-button, .refresh-button { padding: 8px 16px; font-size: 14px; }
+    .sticker { font-size: 25px; }
+    .end-screen img { width: 150px; }
+    #timer { font-size: 14px; padding: 5px 10px; }
+}
+ont-size: 25px; }
+    .end-screen img { width: 150px; }
+    #timer { font-size: 14px; padding: 5px 10px; }
+}
+
+
+/*новое↓*/
+@media (max-width: 600px) {
+  .end-screen {
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .end-screen img {
+    width: 220px;
+    margin-bottom: 20px;
+  }
+
+  .refresh-button {
+    width: auto;
+    padding: 10px 20px;
+    font-size: 16px;
+  }
 }
