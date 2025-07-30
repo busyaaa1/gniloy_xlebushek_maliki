@@ -364,3 +364,33 @@ body {
 }
 
 
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  max-width: 90vw;
+  width: 100%;
+  justify-content: center;
+  align-content: center;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 60vh; /* Центрируем по высоте */
+}
+
+@media (max-width: 768px) {
+  .game-board {
+    grid-template-columns: repeat(5, 1fr); /* 3 столбца на маленьких экранах */
+    min-height: 50vh;
+  }
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #ffe6f0, #d8cfff);
+}
