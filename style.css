@@ -379,7 +379,7 @@ body {
 
 @media (max-width: 768px) {
   .game-board {
-    grid-template-columns: repeat(5, 1fr); /* 3 столбца на маленьких экранах */
+    grid-template-columns: repeat(3, 1fr); /* 3 столбца на маленьких экранах */
     min-height: 50vh;
   }
 }
