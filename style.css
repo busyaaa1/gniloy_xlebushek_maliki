@@ -1,37 +1,31 @@
 body {
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: #f7f7f7; /* твой цвет */
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #ecfffc, #ffa8c8);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Центрируем содержимое по вертикали */
+    align-items: center;
+    min-height: 100vh; /* Гарантируем, что фон занимает всю высоту */
+    background-color: #f7f7f7;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #ecfffc, #ffa8c8);
 
-  justify-content: start;
-  **background-attachment: fixed;** /* Делает фон фиксированным относительно окна просмотра */
-    **background-size: cover;** /* Растягивает фон, чтобы он покрывал всю область, обрезая лишнее */
-    **background-repeat: no-repeat;** /* Отменяет повторение фона */
-    min-height: 100vh; /* Убеждаемся, что body занимает всю высоту */
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
-/* .game-board {
+.game-board {
     display: grid;
-    grid-template-columns: repeat(6, 100px);
-    grid-gap: 10px;
-} */
- .game-board {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr); /* 6 карточек всегда */
-  gap: 10px;
-  max-width: 720px;
-  margin: auto;
-  padding: 20px;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh; /* Центрирование по вертикали */
-  box-sizing: border-box;
+    grid-template-columns: repeat(6, 1fr); /* 6 карточек всегда */
+    gap: 10px;
+    max-width: 720px;
+    margin: auto;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    /* УДАЛЕНО: min-height: 100vh; отсюда, чтобы не было больших промежутков */
+    box-sizing: border-box;
 }
 
 .card {
@@ -44,22 +38,20 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative; /* ← добавлено */
-     overflow: hidden; /* ← добавлено! */
-    /* overflow: hidden; добавлено */
+    position: relative;
+    overflow: hidden;
 }
 
 .card img {
     max-width: 100%;
     max-height: 100%;
-    /* object-fit: contain; добавлено */
     display: none;
 }
 
 .card.flipped img {
     display: block;
 }
-/* снизу всё новое */
+
 @keyframes shake {
     0% { transform: translate(0px, 0px) rotate(0deg); }
     20% { transform: translate(-2px, 0px) rotate(-1deg); }
@@ -71,17 +63,15 @@ body {
 
 .card:hover:not(.flipped) {
     animation: shake 0.4s;
-    transform: translateZ(0); /* ← добавлено */
+    transform: translateZ(0);
 }
-
-/* снизу всё новое */
 
 .sticker {
     position: fixed;
     font-size: 40px;
     z-index: 999;
     animation: spin 8s linear infinite;
-    pointer-events: none; /* чтобы не мешали кликам */
+    pointer-events: none;
 }
 
 .sticker.top-left {
@@ -113,325 +103,227 @@ body {
     }
 }
 
-/* добавлено */
 .popup-instruction {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
 }
 .popup-content {
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  text-align: center;
-  max-width: 500px; /* вот это добавили */
-  width: 90%; /* чтобы на телефоне смотрелось нормально */
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
-/* кнопка */
 .nice-button {
-  background: linear-gradient(135deg, #ff8a00, #e52e71);
-  border: none;
-  color: white;
-  padding: 12px 24px;
-  font-size: 18px;
-  font-weight: bold;
-  border-radius: 30px;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  transition: transform 0.2s, box-shadow 0.2s;
+    background: linear-gradient(135deg, #ff8a00, #e52e71);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .nice-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
 }
 
 .nice-button:active {
-  transform: scale(0.98);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    transform: scale(0.98);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
-/* фон */
-/* body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #ecfffc, #ffa8c8);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: start;
-} */
-/* анимация */
+
 @keyframes popupFade {
-  from {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 .popup-content {
-  animation: popupFade 0.3s ease;
+    animation: popupFade 0.3s ease;
 }
-
-
-
-
 
 #timer {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: white;
-  padding: 10px 20px;
-  border-radius: 12px;
-  font-weight: bold;
-  font-size: 18px;
-  z-index: 1000;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 18px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
 
 .end-screen {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 1001;
-}
-
-.end-screen img {
-  max-width: 300px;
-  margin-bottom: 20px;
-}
-
-.end-screen button {
-  padding: 12px 24px;
-  font-size: 18px;
-  border-radius: 20px;
-  background: #ff8a00;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.hidden {
-  display: none;
-}
-
-
-/* Общие стили финального экрана */
-/* .end-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-  text-align: center;
-  padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    text-align: center;
+    padding: 20px;
 }
 
 #game-over {
-  background: linear-gradient(to right, #444459, #3d3a4a); /* красный градиент */
+    background: linear-gradient(to right, #dfdff2, #ebf5f7); 
 }
 
 #winner {
-  background: linear-gradient(to right, #ccffcc, #aaffaa); /* зелёный градиент */
+    background: linear-gradient(to right, #f9ffd6, #afffaf);
 }
 
 .end-screen img {
-  width: 200px;
-  animation: swing 1s infinite ease-in-out;
+    width: 320px;
+    animation: swing 1.5s infinite ease-in-out;
+    pointer-events: none;
 }
 
 .end-screen button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: white;
-  border: none;
-  font-size: 18px;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    margin-top: 20px;
+    padding: 12px 24px;
+    font-size: 18px;
+    border-radius: 12px;
+    background-color: #ff8a00;
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    z-index: 2001;
 }
 
-/* Анимация качания */
 @keyframes swing {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(5deg); }
-  50% { transform: rotate(0deg); }
-  75% { transform: rotate(-5deg); }
-  100% { transform: rotate(0deg); }
-} */
-/* --- финальный экран победы и поражения --- */
-.end-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000; /* Повышаем приоритет, чтобы точно был поверх всего */
-  text-align: center;
-  padding: 20px;
-}
-
-#game-over {
-  background: linear-gradient(to right, #dfdff2, #ebf5f7); 
-}
-
-#winner {
-  background: linear-gradient(to right, #f9ffd6, #afffaf);
-}
-
-.end-screen img {
-  width: 320px;
-  animation: swing 1.5s infinite ease-in-out; /* только качание картинки */
-  pointer-events: none; /* чтобы не мешала кнопке */
-}
-
-.end-screen button {
-  margin-top: 20px;
-  padding: 12px 24px;
-  font-size: 18px;
-  border-radius: 12px;
-  background-color: #ff8a00;
-  color: white;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  z-index: 2001; /* тоже поверх */
-}
-
-/* Анимация качания (только картинка) */
-@keyframes swing {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(5deg); }
-  50% { transform: rotate(0deg); }
-  75% { transform: rotate(-5deg); }
-  100% { transform: rotate(0deg); }
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); }
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(-5deg); }
+    100% { transform: rotate(0deg); }
 }
 
 .hidden {
-  display: none !important;
+    display: none !important;
 }
 
-
-/* refresh */
-/* .refresh-button {
-  background: linear-gradient(135deg, #ffaa0c, #e03a4d); /* тот же красивый градиент
-} */
 .refresh-button {
-   background: linear-gradient(135deg, #ffaa0c, #e03a4d);
-  border: none;
-  color: white;
-  padding: 12px 24px;
-  font-size: 18px;
-  font-weight: bold;
-  border-radius: 30px;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  transition: transform 0.2s, box-shadow 0.2s;
+    background: linear-gradient(135deg, #ffaa0c, #e03a4d);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .refresh-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
 }
 
 .refresh-button:active {
-  transform: scale(0.98);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-}
-
-/* Ваши текущие стили для больших экранов (десктопов) */
-.game-board {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr); /* 6 карточек всегда на больших экранах */
-    gap: 10px;
-    max-width: 720px;
-    margin: auto;
-    padding: 20px;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    box-sizing: border-box;
-}
-
-.card {
-    width: 90px;
-    height: 140px;
-    /* остальные стили карточек */
+    transform: scale(0.98);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 /* --- Медиа-запросы для мобильных устройств --- */
-@media (max-width: 768px) { /* Применяем эти стили, когда ширина экрана МЕНЬШЕ или равна 768px */
+@media (max-width: 768px) {
     .game-board {
-        grid-template-columns: repeat(4, 1fr); /* Для мобильных устройств делаем 4 колонки */
-        gap: 8px; /* Немного уменьшим отступы */
-        padding: 10px; /* Уменьшим внутренние отступы */
+        /* grid-template-columns: repeat(6, 1fr); - уже установлено по умолчанию выше */
+        gap: 5px; /* Уменьшим отступы между карточками */
+        padding: 5px; /* Уменьшим отступы от края доски */
     }
 
     .card {
-        width: 70px; /* Уменьшим ширину карточек */
-        height: 100px; /* Уменьшим высоту карточек */
+        width: 45px; /* Значительно уменьшаем ширину карточек для 6 колонок */
+        height: 70px; /* Значительно уменьшаем высоту карточек для 6 колонок */
     }
 
-    /* Можете также уменьшить размер шрифта для инструкций и кнопок, если они выглядят слишком большими */
+    /* Можете также уменьшить размер шрифта для инструкций и кнопок */
     .popup-content h2 {
-        font-size: 20px;
+        font-size: 18px;
     }
     .popup-content p {
-        font-size: 14px;
+        font-size: 12px;
     }
     .nice-button, .refresh-button {
-        padding: 10px 20px;
-        font-size: 16px;
+        padding: 8px 16px;
+        font-size: 14px;
     }
     
     .sticker {
-        font-size: 30px; /* Уменьшим размер стикеров */
+        font-size: 25px;
     }
 
     .end-screen img {
-        width: 200px; /* Уменьшим размер картинок победы/поражения */
+        width: 150px;
+    }
+
+    #timer {
+        font-size: 14px;
+        padding: 5px 10px;
     }
 }
 
-@media (max-width: 480px) { /* Для очень маленьких экранов (например, старых смартфонов) */
+@media (max-width: 480px) {
     .game-board {
-        grid-template-columns: repeat(3, 1fr); /* Можно сделать 3 колонки для совсем маленьких */
-        gap: 5px;
-        padding: 5px;
+        /* grid-template-columns: repeat(6, 1fr); - уже установлено по умолчанию выше */
+        gap: 3px; /* Ещё меньше отступы для очень маленьких экранов */
+        padding: 3px;
     }
 
     .card {
-        width: 60px; /* Ещё уменьшим карточки */
-        height: 80px;
+        width: 40px; /* Еще уменьшим карточки */
+        height: 60px;
+    }
+
+    /* Уменьшить шрифты и кнопки еще больше, если нужно */
+    .popup-content h2 {
+        font-size: 16px;
+    }
+    .popup-content p {
+        font-size: 11px;
+    }
+    .nice-button, .refresh-button {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    .sticker {
+        font-size: 20px;
+    }
+    .end-screen img {
+        width: 120px;
+    }
+    #timer {
+        font-size: 12px;
+        padding: 3px 6px;
     }
 }
