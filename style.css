@@ -1,17 +1,31 @@
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f0f0;
-    font-family: Arial, sans-serif;
-    margin: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f7f7f7; /* твой цвет */
+  font-family: 'Comic Sans MS', cursive, sans-serif;
 }
 
-.game-board {
+/* .game-board {
     display: grid;
     grid-template-columns: repeat(6, 100px);
     grid-gap: 10px;
+} */
+ .game-board {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* 6 карточек всегда */
+  gap: 10px;
+  max-width: 720px;
+  margin: auto;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Центрирование по вертикали */
+  box-sizing: border-box;
 }
 
 .card {
@@ -348,3 +362,5 @@ body {
   transform: scale(0.98);
   box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
+
+
