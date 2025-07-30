@@ -1261,7 +1261,7 @@ ont-size: 25px; }
 
 
 /*новое↓*/
-@media (max-width: 600px) {
+/*@media (max-width: 600px) {
   .end-screen {
     justify-content: center;
     padding: 10px;
@@ -1276,5 +1276,26 @@ ont-size: 25px; }
     width: auto;
     padding: 10px 20px;
     font-size: 16px;
+  }
+}*/
+@media (max-width: 600px) {
+  .end-screen {
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .end-screen img {
+    width: 70%;
+    max-width: 250px;
+    margin-bottom: 16px;
+  }
+
+  .refresh-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    width: auto;
+    border-radius: 20px;
   }
 }
